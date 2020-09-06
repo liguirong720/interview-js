@@ -123,26 +123,26 @@ console.log(quickSort(a))
 
 
 /**
- * sum(1,2,3)()
- * sum(1,2)(3)()
- * sum(1)(2)(3)()
+ * sum(1,2,3)
+ * sum(1,2)(3)
+ * sum(1)(2)(3)
  */
-function sum(...args) {
-    return args.reduce((pre, curr) => pre + curr)
+function add(a, b, c) {
+    return a + b + c
 }
 
-function currying(fn) {
-    let args = []
-    return function f(...innerArgs) {
-        if (innerArgs.length) {
-            args = [...args, ...innerArgs]
-            return f
-        } else {
-            return fn.apply(this, args)
+function currying(fn, ...args) {
+    if (fn.length > args.length) {
+        return function(...innerArgs) {
+            return currying(fn, ...args, ...innerArgs)
         }
+    } else {
+        return fn(...args)
     }
 }
 
-let sumCurry = currying(sum)
-let total = sumCurry(1,2,3)(5)(6,7)()
-console.log(total)
+let sum = currying(add)
+
+console.log(add(1,2,3))
+console.log(add(1)(2,3))
+console.log(add(1)(2)(3))
