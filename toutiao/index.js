@@ -57,18 +57,15 @@ Promise.myAll = function (arr) {
         let arrLen = arr.length;
         let result = [];
         arr.forEach((item) => {
-            Promise.resolve(item).then(
-            (res) => {
+            Promise.resolve(item).then((res) => {
                 resolveCount++;
                 result.push(res);
                 if (resolveCount === arrLen) {
                 return resolve(result);
                 }
-            },
-            (err) => {
+            },(err) => {
                 return reject(err);
-            }
-            );
+            });
         });
     });
 };
@@ -79,18 +76,73 @@ Promise.myAll = function (arr) {
  * 找出其中连续出现的数字区间为如下：
  * ["0->2", "4->5", "7", "13", "15->16"]
  */
-function summaryRanges(args) {};
+function summaryRanges(arr) {
+    let result = []
+    if (arr.length === 1) {
+        result.push(`${arr[0]}`)
+    } else {
+        for (let i = 0; i < arr.length; i++) {
+            let curr = arr[i]
+            while(i+1 < arr.length && (arr[i+1] - arr[i] === 1)) {
+                i++
+            }
+            if (curr !== arr[i]) {
+                result.push(`${curr}->${arr[i]}`)
+            } else {
+                result.push(`${arr[i]}`)
+            }
+        }
+    }
+    return result
+};
+
+let arr = [0, 2, 3, 4, 6, 8, 9]
+console.log(summaryRanges(arr))
+
 
 /**
  * 实现快排
  * @param {*} arr 
  */
-function quickSort(arr = []) {}
+function quickSort(arr = []) {
+    if (arr.length <= 1) {
+        return arr
+    }
+    let middleIndex = Math.floor(arr.length / 2)
+    let middleValue = arr.splice(middleIndex, 1)
+    let leftArray = []
+    let rightArray = []
+    for (let i = 0; i < arr.length; i++) {
+        arr[i] > middleValue ? rightArray.push(arr[i]) : leftArray.push(arr[i])
+    }
+    return quickSort(leftArray).concat(middleValue, quickSort(rightArray))
+}
+
+let a = [4,9,2,1,8,3,5,0,7]
+console.log(quickSort(a))
 
 
 /**
- * sum(1,2,3)
- * sum(1,2)(3)
- * sum(1)(2)(3)
+ * sum(1,2,3)()
+ * sum(1,2)(3)()
+ * sum(1)(2)(3)()
  */
-function sum() {}
+function sum(...args) {
+    return args.reduce((pre, curr) => pre + curr)
+}
+
+function currying(fn) {
+    let args = []
+    return function f(...innerArgs) {
+        if (innerArgs.length) {
+            args = [...args, ...innerArgs]
+            return f
+        } else {
+            return fn.apply(this, args)
+        }
+    }
+}
+
+let sumCurry = currying(sum)
+let total = sumCurry(1,2,3)(5)(6,7)()
+console.log(total)
