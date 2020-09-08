@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>碰撞检测</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .box1 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 120px;
+            left: 180px;
+            background-color: aqua;
+            z-index: 2;
+        }
+        .box2 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 230px;
+            left: 635px;
+            background-color: chocolate;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box1"></div>
+        <div class="box2"></div>
+    </div>
+    <script>
+        let container = document.querySelector('.container')
+        let cw = container.offsetWidth
+        let ch = container.offsetHeight
+        let box1 = document.querySelector('.box1')
+        let box2 = document.querySelector('.box2')
+
+        box1.onmousedown = function(e) {
+            e = e || event
+            let disX = e.clientX - box1.offsetLeft
+            let disY = e.clientY - box1.offsetTop
+
+            document.onmousemove = function(ev) {
+                ev = ev || event
+
+                box1.style.left = ev.clientX - disX + 'px'
+                box1.style.top = ev.clientY - disY + 'px'
+
+                // 计算出盒子box1左右两边距离左边的距离，上下两边距离顶部的距离
+                let l1 = box1.offsetLeft
+                let r1 = box1.offsetLeft + box1.offsetWidth
+                let t1 = box1.offsetTop
+                let b1 = box1.offsetTop + box1.offsetHeight
+
+                // 控制盒子1不要拖拽出容器
+                if (l1 < 0) box1.style.left = '0px'
+                if (t1 < 0) box1.style.top = '0px'
+                if (r1 > cw) box1.style.left = cw - box1.offsetWidth + 'px'
+                if (b1 > ch) box1.style.top = ch - box1.offsetHeight + 'px'
+
+                // 计算出盒子box2左右两边距离左边的距离，上下两边距离顶部的距离
+                let l2 = box2.offsetLeft
+                let r2 = box2.offsetLeft + box2.offsetWidth
+                let t2 = box2.offsetTop
+                let b2 = box2.offsetTop + box2.offsetHeight
+
+                // 不碰撞的条件：
+                // 1、盒子1右边距离比盒子2左边距离小
+                // 2、盒子1左边距离比盒子2右边距离大
+                // 3、盒子1底部距离比盒子2顶部距离小
+                // 4、盒子1顶部距离比盒子2底部距离大
+                // 除上述四种情况外，都是碰撞的情况
+                if (r1 < l2 || l1 > r2 || b1 < t2 || t1 > b2) {
+                    box2.style.backgroundColor = 'chocolate'
+                } else {
+                    box2.style.backgroundColor = 'darkred'
+                }
+            }
+
+            document.onmouseup = function() {
+                document.onmousemove = null
+                document.onmouseup = null
+            }
+        }
+    </script>
+</body>
+</html>
