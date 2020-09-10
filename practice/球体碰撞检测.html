@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>球体碰撞检测</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .box1 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 120px;
+            left: 180px;
+            background-color: aqua;
+            z-index: 2;
+            border-radius: 50%;
+        }
+        .box2 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 230px;
+            left: 635px;
+            background-color: chocolate;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box1"></div>
+        <div class="box2"></div>
+    </div>
+    <script>
+        let box1 = document.querySelector('.box1')
+        let box2 = document.querySelector('.box2')
+
+        box1.onmousedown = function(e) {
+            e = e || event
+            let disX = e.clientX - box1.offsetLeft
+            let disY = e.clientY - box1.offsetTop
+
+            document.onmousemove = function(ev) {
+                ev = ev || event
+                box1.style.left = ev.clientX - disX + 'px'
+                box1.style.top = ev.clientY -disY + 'px'
+
+                // 计算球1的半径和球心坐标
+                let r1 = box1.offsetWidth / 2
+                let x1 = box1.offsetLeft + r1
+                let y1 = box1.offsetTop + r1
+
+                // 计算球1的半径和球心坐标
+                let r2 = box2.offsetWidth / 2
+                let x2 = box2.offsetLeft + r2
+                let y2 = box2.offsetTop + r2
+
+                // 勾股定理，斜边距离大于两个圆圆心距离，则不相交，否则相交
+                let diff = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
+                let len = (r1 + r2) * (r1 + r2)
+
+                if (diff <= len) {
+                    box2.style.backgroundColor = 'darkred'
+                } else {
+                    box2.style.backgroundColor = 'chocolate'
+                }
+            }
+
+            document.onmouseup = function() {
+                document.onmousemove = null
+                document.onmouseup = null
+            }
+        }
+    </script>
+</body>
+</html>
